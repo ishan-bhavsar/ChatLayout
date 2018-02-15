@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChatLayout">
+        <attr name="padding" format="dimension" />
+        <attr name="margin" format="dimension" />
+        <attr name="corner_radius" format="dimension" />
+        <attr name="triangle_corner_radius" format="dimension" />
+        <attr name="triangle_length" format="dimension" />
+        <attr name="triangle_angle" format="float" />
+        <attr name="layout_background" format="color" />
+        <attr name="layout_foreground" format="color" />
+        <attr name="sender" format="boolean" />
+    </declare-styleable>
+</resources>

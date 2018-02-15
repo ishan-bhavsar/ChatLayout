@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.stellaquila.chatlayout.example.ChatLayoutExample">
+
+    <com.stellaquila.ChatLayout xmlns:chat="http://schemas.android.com/apk/res/com.stellaquila.chatlayout.example"
+        android:id="@+id/chat_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        chat:corner_radius="10dp"
+        chat:layout_foreground="@android:color/darker_gray"
+        chat:margin="5dp"
+        chat:padding="5dp"
+        chat:sender="false"
+        chat:triangle_angle="45"
+        chat:triangle_corner_radius="1dp"
+        chat:triangle_length="10dp">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/colorPrimaryDark"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hello" />
+
+    </com.stellaquila.ChatLayout>
+
+    <Button
+        android:id="@+id/togglebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toggle" />
+
+</LinearLayout>
