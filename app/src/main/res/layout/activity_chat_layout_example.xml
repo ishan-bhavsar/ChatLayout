@@ -18,7 +18,8 @@
         chat:sender="false"
         chat:triangle_angle="45"
         chat:triangle_corner_radius="1dp"
-        chat:triangle_length="10dp">
+        chat:triangle_length="10dp"
+        chat:style="WhatsApp">
 
         <ImageView
             android:layout_width="50dp"
@@ -37,6 +38,12 @@
         android:id="@+id/togglebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Toggle" />
+        android:text="Toggle: Receiver" />
+
+    <Button
+        android:id="@+id/stylebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Style: WhatsApp" />
 
 </LinearLayout>

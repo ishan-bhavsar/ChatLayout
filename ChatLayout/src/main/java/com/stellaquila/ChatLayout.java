@@ -1,6 +1,5 @@
 package com.stellaquila;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -10,9 +9,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -21,7 +18,7 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
- * Created by GPTSI on 09-02-2018.
+ * Created by Ishan Bhavsar on 09-02-2018.
  */
 
 public class ChatLayout extends LinearLayout {
@@ -39,7 +36,11 @@ public class ChatLayout extends LinearLayout {
     private int mLayoutHeight;
     private ArrayList<Point> mOriginList;
     private Point mOrigin;
+    private int mStyle;
+
     private static final String TAG = ChatLayout.class.getSimpleName();
+    public static final int STYLE_WHATSAPP = 1;
+    public static final int STYLE_IPHONE = 2;
 
     public ChatLayout(Context context) {
         super(context);
@@ -83,6 +84,7 @@ public class ChatLayout extends LinearLayout {
             mForegroundColor = customAttr.getColor(R.styleable.ChatLayout_layout_foreground, getResources().getColor(R.color.primary_material_light));
             mBackgroundColor = customAttr.getColor(R.styleable.ChatLayout_layout_background, Color.TRANSPARENT);
             mSender = customAttr.getBoolean(R.styleable.ChatLayout_sender, true);
+            mStyle = customAttr.getInt(R.styleable.ChatLayout_style, STYLE_WHATSAPP);
         } finally {
             customAttr.recycle();
         }
@@ -114,6 +116,7 @@ public class ChatLayout extends LinearLayout {
             mForegroundColor = customAttr.getColor(R.styleable.ChatLayout_layout_foreground, getResources().getColor(R.color.primary_material_light));
             mBackgroundColor = customAttr.getColor(R.styleable.ChatLayout_layout_background, Color.TRANSPARENT);
             mSender = customAttr.getBoolean(R.styleable.ChatLayout_sender, true);
+            mStyle = customAttr.getInt(R.styleable.ChatLayout_style, STYLE_WHATSAPP);
         } finally {
             customAttr.recycle();
         }
@@ -146,9 +149,9 @@ public class ChatLayout extends LinearLayout {
         canvas.drawPath(path, p);
 
         if (mSender)
-            path = getSender(width, height);
+            path = getSender(width, height, mStyle);
         else
-            path = getReceiver(width, height);
+            path = getReceiver(width, height, mStyle);
 
         p.setColor(mForegroundColor);
         canvas.drawPath(path, p);
@@ -176,7 +179,7 @@ public class ChatLayout extends LinearLayout {
     /**
      * Return Path for receiver Chat Bubble
      */
-    private Path getReceiver(int width, int height) {
+    private Path getReceiver(int width, int height, int style) {
 
         float m = mMargin;                      // min Margin
 
@@ -195,29 +198,55 @@ public class ChatLayout extends LinearLayout {
         *                    \ |
         *                     \|
         * */
-        float tL1 = mTriangleLength;                                                             // Triangle Length
-        float tH1 = (float) (mTriangleLength * Math.tan(Math.toRadians(mTriangleAngle)));          // Triangle Height
+        float tL1 = mTriangleLength;                                                                // Triangle Length
+        float tH1 = (float) (mTriangleLength * Math.tan(Math.toRadians(mTriangleAngle)));           // Triangle Height
         float tL2 = (float) (2 * mTriangleCornerRadius / Math.tan(Math.toRadians(mTriangleAngle))); // Triangle Length
-        float tH2 = 2 * mTriangleCornerRadius;                                                    // Triangle Height
-        float rT = width - rx - tL2 - (2 * m);                   // Rectangle Top
-        float rB = width - tL2 - tL1 - (2 * rx) - (2 * m);           // Rectangle Bottom
-        float rR = height - (2 * ry) - (2 * m);                  // Rectangle Right
-        float rL = height - tH1 - ry - (2 * m);                  // Rectangle Left
+        float tH2 = 2 * mTriangleCornerRadius;                                                      // Triangle Height
 
         Path path = new Path();
 
-        path.moveTo(m + tL2, m);                                                 // Start at
-        path.rLineTo(rT, 0);                                                 // Top Line
-        path.rQuadTo(rx, 0, rx, ry);                                          // Top Right corner
-        path.rLineTo(0, rR);                                                // Right Line
-        path.rQuadTo(0, ry, -rx, ry);                                         // Bottom Right Corner
-        path.rLineTo(-rB, 0);                                               // Bottom Line
-        path.rQuadTo(-rx, 0, -rx, -ry);                                     // Bottom Left Corner
-        path.rLineTo(0, -rL);                                               // Left Line
-        path.rLineTo(-(tL1), -(tH1 - tH2));                                       // Triangle Slant Line
-        path.rQuadTo(-tL2, -tr, 0, -tH2);                                     // Top Left Corner
-        path.close();
+        switch (style) {
+            case STYLE_WHATSAPP: {
+                float rT = width - rx - tL2 - (2 * m);                   // Rectangle Top
+                float rB = width - tL2 - tL1 - (2 * rx) - (2 * m);       // Rectangle Bottom
+                float rR = height - (2 * ry) - (2 * m);                  // Rectangle Right
+                float rL = height - tH1 - ry - (2 * m);                  // Rectangle Left
 
+                path.moveTo(m + tL2, m);                              // Start at
+                path.rLineTo(rT, 0);                                 // Top Line
+                path.rQuadTo(rx, 0, rx, ry);                        // Top Right corner
+                path.rLineTo(0, rR);                                 // Right Line
+                path.rQuadTo(0, ry, -rx, ry);                       // Bottom Right Corner
+                path.rLineTo(-rB, 0);                                // Bottom Line
+                path.rQuadTo(-rx, 0, -rx, -ry);                     // Bottom Left Corner
+                path.rLineTo(0, -rL);                                // Left Line
+                path.rLineTo(-(tL1), -(tH1 - tH2));                      // Triangle Slant Line
+                path.rQuadTo(-tL2, -tr, 0, -tH2);                   // Top Left Corner
+                path.close();
+            }
+            break;
+            case STYLE_IPHONE: {
+                float p = 5;                                             // min Padding
+                float rT = width - tL1 - (2 * rx) - (2 * m) + p;         // Rectangle Top
+                float rB = width - tL1 - (2 * rx) - (2 * m) + p;         // Rectangle Bottom
+                float rR = height - (2 * ry) - (2 * m);                  // Rectangle Right
+                float rL = height - (2.5f * ry) - (2 * m);                 // Rectangle Left
+
+                path.moveTo(m + tL1 + rx - p, m);                                     // Start at
+                path.rLineTo(rT, 0);                                                 // Top Line
+                path.rQuadTo(rx, 0, rx, ry);                                        // Top Right corner
+                path.rLineTo(0, rR);                                                 // Right Line
+                path.rQuadTo(0, ry, -rx, ry);                                       // Bottom Right Corner
+                path.rLineTo(-rB, 0);                                                // Bottom Line
+                path.rQuadTo(-rx / 2, 0, -rx / 2, -ry / 2);                // Bottom Left Corner
+                path.rQuadTo(-((rx / 2) + tL1) / 2, ry / 2, -((rx / 2) + tL1), ry / 2); // Bottom curve Bottom
+                path.rQuadTo(((rx / 2) + tL1) / 2, 0, ((rx / 2) + tL1), -ry * 1.5f);  // Bottom curve Top
+                path.rLineTo(0, -rL);                                                // Left Line
+                path.rQuadTo(0, -ry, rx, -ry);                                      // Top Left Corner
+                path.close();
+            }
+            break;
+        }
         return path;
     }
 
@@ -225,10 +254,9 @@ public class ChatLayout extends LinearLayout {
     /**
      * Return Path for sender Chat Bubble
      */
-    private Path getSender(int width, int height) {
+    private Path getSender(int width, int height, int style) {
 
         float m = mMargin;                      // min Margin
-
         float tr = mTriangleCornerRadius;
         float rx = mCornerRadius;
         float ry = mCornerRadius;
@@ -244,29 +272,55 @@ public class ChatLayout extends LinearLayout {
         *                    \ |
         *                     \|
         * */
-        float tL1 = mTriangleLength;                                                             // Triangle Length
-        float tH1 = (float) (mTriangleLength * Math.tan(Math.toRadians(mTriangleAngle)));          // Triangle Height
+        float tL1 = mTriangleLength;                                                                // Triangle Length
+        float tH1 = (float) (mTriangleLength * Math.tan(Math.toRadians(mTriangleAngle)));           // Triangle Height
         float tL2 = (float) (2 * mTriangleCornerRadius / Math.tan(Math.toRadians(mTriangleAngle))); // Triangle Length
-        float tH2 = 2 * mTriangleCornerRadius;                                                    // Triangle Height
-        float rT = width - rx - tL2 - (2 * m);                   // Rectangle Top
-        float rB = width - tL2 - tL1 - (2 * rx) - (2 * m);           // Rectangle Bottom
-        float rR = height - tH1 - ry - (2 * m);                  // Rectangle Right
-        float rL = height - (2 * ry) - (2 * m);                  // Rectangle Left
+        float tH2 = 2 * mTriangleCornerRadius;                                                      // Triangle Height
 
         Path path = new Path();
-        path.moveTo(rx + m, m);                                                 // Start at
-        path.rLineTo(rT, 0);                                                 // Top Line
-        path.rQuadTo(tL2, tr, 0, tH2);                                     // Top Right Corner
-        path.rLineTo(-(tL1), (tH1 - tH2));                                       // Triangle Slant Line
-        path.rLineTo(0, rR);                                                // Right Line
-        path.rQuadTo(0, ry, -rx, ry);                                         // Bottom Right Corner
-        path.rLineTo(-rB, 0);                                               // Bottom Line
-        path.rQuadTo(-rx, 0, -rx, -ry);                                     // Bottom Left Corner
-        path.rLineTo(0, -rL);                                               // Left Line
-        path.rQuadTo(0, -ry, rx, -ry);                                          // Top Right corner
 
-        path.close();
+        switch (style) {
+            case STYLE_WHATSAPP: {
+                float rT = width - rx - tL2 - (2 * m);                   // Rectangle Top
+                float rB = width - tL2 - tL1 - (2 * rx) - (2 * m);       // Rectangle Bottom
+                float rR = height - tH1 - ry - (2 * m);                  // Rectangle Right
+                float rL = height - (2 * ry) - (2 * m);                  // Rectangle Left
 
+                path.moveTo(rx + m, m);                               // Start at
+                path.rLineTo(rT, 0);                                 // Top Line
+                path.rQuadTo(tL2, tr, 0, tH2);                      // Top Right Corner
+                path.rLineTo(-(tL1), (tH1 - tH2));                       // Triangle Slant Line
+                path.rLineTo(0, rR);                                 // Right Line
+                path.rQuadTo(0, ry, -rx, ry);                       // Bottom Right Corner
+                path.rLineTo(-rB, 0);                                // Bottom Line
+                path.rQuadTo(-rx, 0, -rx, -ry);                     // Bottom Left Corner
+                path.rLineTo(0, -rL);                                // Left Line
+                path.rQuadTo(0, -ry, rx, -ry);                      // Top Right corner
+                path.close();
+            }
+            break;
+            case STYLE_IPHONE: {
+                float p = 5;                                            // min Padding
+                float rT = width - tL1 - (2 * rx) - p - (2 * m);        // Rectangle Top
+                float rB = width - tL1 - (2 * rx) + p - (2 * m);         // Rectangle Bottom
+                float rR = height - (2.5f * ry) - (2 * m);              // Rectangle Right
+                float rL = height - (2 * ry) - (2 * m);                 // Rectangle Left
+
+                path.moveTo(m, m + ry);                                                    // Start at
+                path.rLineTo(0, rL);                                                      // Left Line
+                path.rQuadTo(0, ry, rx, ry);                                             // Bottom Left Corner
+                path.rLineTo(rB, 0);                                                      // Bottom Line
+                path.rQuadTo(rx / 2, 0, rx / 2 + p, -ry / 2);                     // Bottom Right Corner
+                path.rQuadTo(((rx / 2 + p) + tL1) / 2, ry / 2, ((rx / 2 + p) + tL1), ry / 2);    // Bottom curve Bottom
+                path.rQuadTo(-((rx / 2 + p) + tL1) / 2, 0, -((rx / 2 + p) + tL1), -ry * 1.5f); // Bottom curve Top
+                path.rLineTo(0, -rR);                                                     // Right Line
+                path.rQuadTo(0, -ry, -rx, -ry);                                          // Top Right Corner
+                path.rLineTo(-rT, 0);                                                     // Top Line
+                path.rQuadTo(-rx, 0, -rx, ry);                                           // Top Left corner
+                path.close();
+            }
+            break;
+        }
         return path;
     }
 
@@ -529,6 +583,16 @@ public class ChatLayout extends LinearLayout {
 
     public void setPadding(float mPadding) {
         this.mPadding = mPadding;
+        invalidate();
+        requestLayout();
+    }
+
+    public int getStyle() {
+        return mStyle;
+    }
+
+    public void setStyle(int mStyle) {
+        this.mStyle = mStyle;
         invalidate();
         requestLayout();
     }

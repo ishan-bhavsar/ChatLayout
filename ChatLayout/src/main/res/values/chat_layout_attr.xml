@@ -10,5 +10,9 @@
         <attr name="layout_background" format="color" />
         <attr name="layout_foreground" format="color" />
         <attr name="sender" format="boolean" />
+        <attr name="style" format="enum">
+            <enum name="WhatsApp" value="1"/>
+            <enum name="Iphone" value="2"/>
+        </attr>
     </declare-styleable>
 </resources>
